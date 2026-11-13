@@ -8,7 +8,7 @@ A Python tool to read screen orientation sensor on Zenscreen without vendor soft
 
 You'll find me talking about I2C bus 14, but the script accepts any number you give.
 
-More on how to determine that below.
+[More on how to determine that below.](#determine-i2c-bus)
 
 ![Investigation](https://img.shields.io/badge/Investigation-COMPLETE-brightgreen)
 ![Python Implementation](https://img.shields.io/badge/Python_Implementation-COMPLETE-brightgreen)
@@ -64,8 +64,11 @@ This tells us the monitor exposes the orientation result over standard DDC/CI, i
 ### Incoveniences encountered
 `0xAA` is a standard DDC/CI feature code, so the obvious next step was just use `ddcutil`, a Linux tool for this. It didn't go smoothly.
 
-`ddcutil detect` only found my laptop's own internal panel. The MB165B is a DisplayLink-chipset monitor, driven on Linux through `evdi` (DisplayLink's open-source kernel driver), which creates its own virtual I2C bus for the connector, and in my case `/dev/i2c-14`, found manually via
-`/sys/class/drm/*/ddc/i2c-dev/`.
+`ddcutil detect` only found my laptop's own internal panel. The MB165B is a DisplayLink-chipset monitor, driven on Linux through `evdi` (DisplayLink's open-source kernel driver), which creates its own virtual I2C bus for the connector, and in my case `/dev/i2c-14`.
+
+<a id="determine-i2c-bus"></a>
+> [!IMPORTANT]
+> You can find which I2C bus to open for DisplayLink I2C Adapter via `/sys/class/drm/*/ddc/i2c-dev/`.
 
 Pointing `ddcutil` straight at that bus was refused outright: `Bus /dev/i2c-14 cannot be used for DDC/CI communication.`. Even `--force` didn't help, and running plain `i2cdetect -y 14` failed with `Error: Bus doesn't support detection commands`.
 
@@ -97,7 +100,7 @@ And it would: DDC/CI is fundamentally a raw-I2C protocol, not an SMBus one. It d
 
 ### Building the request
 
-Before any of this, we open the bus and tell it which device to talk to. In my case, as mentioned earlier, it's bus `14`. Found yours under `/sys/class/drm/*/ddc/i2c-dev/`.
+Before any of this, we open the bus and tell it which device to talk to. In my case, as mentioned earlier, it's bus `14`.
 
 So we want to talk to **I2C_SLAVE** (`0x0703` ioctl number) and use DDC/CI command address `0x37`.
 
