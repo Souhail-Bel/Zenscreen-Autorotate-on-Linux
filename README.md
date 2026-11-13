@@ -1,6 +1,11 @@
 # Zenscreen Auto-rotate on Linux
 A Python tool to read screen orientation sensor on Zenscreen without vendor software.
 
+<img width="320" height="320" alt="preview of blender_demo.py" src="https://github.com/user-attachments/assets/04845e7d-3528-43cc-9a27-79721a544968" />
+
+> `blender_demo.py` in use on a model I made, all inside Blender
+
+
 You'll find me talking about I2C bus 14, but the script accepts any number you give.
 
 More on how to determine that below.
